@@ -26,6 +26,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "log-request": "0.0.1",
+    "node-serialize": "0.0.4",
     "nodemon": "^1.18.4"
   }
 }
