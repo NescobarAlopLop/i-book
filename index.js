@@ -7,10 +7,11 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let logRequest = require('log-request');
 let fs = require('fs');
+let MongoClient = require('mongodb').MongoClient;
 
 let i_book_router = express.Router();
 i_book_router.get('/:name', findIpByName);
-i_book_router.post('/store', storeIP);
+// i_book_router.post('/store', storeIP);
 
 let app = express();        // https://expressjs.com/en/guide/routing.html
 app.use(bodyParser.json({ type: 'application/json' }))
@@ -41,53 +42,77 @@ function findIpByName(req, res) {
     });
 }
 
-function storeIP(req, res) {
-    console.log('Storing ip');
-    MongoClient.connect(mongo_uri, { useNewUrlParser: true }, function (err, db) {
-        // assert.equal(null, err);
-        if (err) {
-            console.error(err);
-            res.statusCode = 500;
-            return res.json({
-                errors: ['Couldnt connect to server']
-            });
-        }
-        console.log("Connected correctly to Mongo server");
-        const dbo = db.db(credentials.mongoDB);
-        let address = req.body;
-        // if ('notes' in address) {
-            // if (address.notes.length <= max_notes) {
-        const collection = dbo.collection(credentials.mongoCollection);
-                collection.insertOne(address, function (err, result) {
-                    if (err) {
-                        console.error(err);
-                        res.statusCode = 500;
-                        return res.json({
-                            errors: ['Failed to save a song']
-                        })
-                    }
-                    res.setHeader('Content-Type', 'application/json');
-                    res.statusCode = 201;
-                    let saved_song_id = result.ops[0]._id;
-                    console.log("one song inserted into db, song id: " + saved_song_id);
-                    res.json(saved_song_id);
-                    db.close();
-                });
-            // }
-            // else {
-                // badSaveObject(res, 'Notes array is limited to ' + max_notes + ' notes');
-            // }
-    //     }
-    //     else {
-    //         badSaveObject(res, 'Wrong object.');
-    //     }
-    });
-}
+// function storeIP(req, res) {
+//     console.log('Storing ip');
+//     MongoClient.connect(mongo_uri, { useNewUrlParser: true }, function (err, db) {
+//         // assert.equal(null, err);
+//         if (err) {
+//             console.error(err);
+//             res.statusCode = 500;
+//             return res.json({
+//                 errors: ['Couldnt connect to server']
+//             });
+//         }
+//         console.log("Connected correctly to Mongo server");
+//         const dbo = db.db(credentials.mongoDB);
+//         let address = req.body;
+//         // if ('notes' in address) {
+//             // if (address.notes.length <= max_notes) {
+//         const collection = dbo.collection(credentials.mongoCollection);
+//                 collection.insertOne(address, function (err, result) {
+//                     if (err) {
+//                         console.error(err);
+//                         res.statusCode = 500;
+//                         return res.json({
+//                             errors: ['Failed to save a song']
+//                         })
+//                     }
+//                     res.setHeader('Content-Type', 'application/json');
+//                     res.statusCode = 201;
+//                     let saved_song_id = result.ops[0]._id;
+//                     console.log("one song inserted into db, song id: " + saved_song_id);
+//                     res.json(saved_song_id);
+//                     db.close();
+//                 });
+//             // }
+//             // else {
+//                 // badSaveObject(res, 'Notes array is limited to ' + max_notes + ' notes');
+//             // }
+//     //     }
+//     //     else {
+//     //         badSaveObject(res, 'Wrong object.');
+//     //     }
+//     });
+// }
 
 function getAllIps(req, res) {
     console.log('getting all ips');
-    return res.json({
-        message: 'getting all ips'
+
+    MongoClient.connect(mongo_uri, { useNewUrlParser: true }, function (err, db) {
+        if (err) {
+            console.error("Getting all addresses failed: " + err);
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 500;
+            return res.json({
+                errors: ['Couldnt connect to data server']
+            });
+        }
+        console.log("Connected to Mongo server");
+
+        let dbo = db.db(credentials.mongoDB);
+        dbo.collection(credentials.mongoCollection).find({}).toArray((err, result) => {
+            if (err) {
+                console.error(err);
+                res.statusCode = 500;
+                return res.json({errors: ['Couldnt count songs']});
+            }
+            console.log(result);
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 200;
+            // result.errors = [];
+            res.json(r);
+            db.close();
+        })
     });
 }
 
