@@ -15,28 +15,21 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-print(socket.gethostname())
+while True:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    print(socket.gethostname())
 
-s.connect(("8.8.8.8", 80))
-ip = s.getsockname()[0]
-print(ip)
-s.close()
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    print(ip)
+    s.close()
 
-hostname = socket.gethostname()
-last_updated = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-# your variables are already assigned before this
-data = {'ip': ip, 'hostname': hostname, 'last_updated': last_updated}
+    hostname = socket.gethostname()
+    last_updated = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
-doc_ref = db.collection(u'address_book').document(u'padonk')
-doc_ref.set(data)
-# doc_ref.set({
-#     u'first': u'Ada',
-#     u'last': u'Lovelace',
-#     u'born': 1815
-# })
+    data = {'ip': ip, 'hostname': hostname, 'last_updated': last_updated}
 
-# results = db.child("users").push(data, user['idToken'])
-
-# sent = json.dumps(data)
-# result = firebase.post("/businesses", sent)
+    # doc_ref = db.collection(u'address_book').document(u'hostname')
+    doc_ref = db.collection(u'address_book').document(hostname)
+    doc_ref.set(data)
+    time.sleep(3 * 60)
