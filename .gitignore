@@ -2,7 +2,8 @@
 credentials.json
 
 .firebase
-.firebasers
+.firebaserc
+
 
 logs
 *.log
