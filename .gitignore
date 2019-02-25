@@ -1,6 +1,9 @@
 # Logs
 credentials.json
 
+.firebase
+.firebasers
+
 logs
 *.log
 npm-debug.log*
