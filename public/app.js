@@ -1,39 +1,17 @@
-// document.addEventListener('DOMContentLoaded', function () {
-//     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-//     // // The Firebase SDK is initialized and available here!
-//     //
-//     // firebase.auth().onAuthStateChanged(user => { });
-//     // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-//     // firebase.messaging().requestPermission().then(() => { });
-//     // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-//     //
-//     // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-//     try {
-//         let app = firebase.app();
-//         let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-//         document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-//     } catch (e) {
-//         console.error(e);
-//         document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-//     }
-// });
-
 document.addEventListener("DOMContentLoaded", event => {
-    const app = firebase.app();
-    console.log(app);
+    // Initialize Firebase
+    const config = {
+        apiKey: "AIzaSyCGKv5N0ibfxCmJTFMzNkpipqsiGefiXxo",
+        authDomain: "i-book-d5521.firebaseapp.com",
+        databaseURL: "https://i-book-d5521.firebaseio.com",
+        projectId: "i-book-d5521",
+        storageBucket: "i-book-d5521.appspot.com",
+        messagingSenderId: "866092882896"
+    };
 
-    const db = firebase.firestore();
-    const myPost = db.collection('address_book').doc('TFyTwoeKdntSOl924hua');
-
-    myPost.onSnapshot()
-        .then(doc => {
-            const data = doc.data();
-            document.write(data.address + `<br>`);
-            document.write(data.hostname + `<br>`);
-            document.write(data.createdAt + `<br>`);
-
-        })
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
 });
 
 
@@ -44,5 +22,26 @@ function googleLogin() {
         const user = result.user;
         document.write(`Hello ${user.displayName}`);
         console.log(user);
+        // getData();
+        const db = firebase.firestore();
+        db.collection("address_book").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                console.log(`${doc.id} => ${data.ip}`);
+                console.log(`${doc.id} => ${data.hostname}`);
+                console.log(`${doc.id} => ${data.last_updated}`);
+            });
+        }).catch(console.log);
     }).catch(console.log);
+}
+
+
+function signOut() {
+    firebase.auth().signOut().then(function () {
+        // Sign-out successful.
+        console.log("sign out OK");
+    }).catch(function (error) {
+        // An error happened.
+        console.log('failed to sign out');
+    });
 }
