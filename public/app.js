@@ -36,6 +36,23 @@ function googleLogin() {
 }
 
 
+function updateData() {
+    const db = firebase.firestore();
+    address_collection = db.collection("address_book");
+    address_collection.onSnapshot((docs) => {
+        docs.forEach((doc) => {
+            let data = doc.data();
+            console.log(`${doc.id} => ${data.ip}`);
+            console.log(`${doc.id} => ${data.hostname}`);
+            console.log(`${doc.id} => ${data.last_updated}`);
+            document.getElementById('addresses').innerText += `${doc.id} => ${data.ip}`;
+            document.getElementById('addresses').innerText += `${doc.id} => ${data.hostname}`;
+            document.getElementById('addresses').innerText += `${doc.id} => ${data.last_updated}`;
+        });
+    });
+}
+
+
 function signOut() {
     firebase.auth().signOut().then(function () {
         // Sign-out successful.
