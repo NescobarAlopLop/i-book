@@ -31,6 +31,8 @@ function googleLogin() {
                 console.log(`${doc.id} => ${data.hostname}`);
                 console.log(`${doc.id} => ${data.last_updated}`);
             });
+        }).then(() => {
+            updateData();
         }).catch(console.log);
     }).catch(console.log);
 }
@@ -45,10 +47,8 @@ function updateData() {
             console.log(`${doc.id} => ${data.ip}`);
             console.log(`${doc.id} => ${data.hostname}`);
             console.log(`${doc.id} => ${data.last_updated}`);
-            document.getElementById('addresses').innerText += `${doc.id} => ${data.ip}`;
-            document.getElementById('addresses').innerText += `${doc.id} => ${data.hostname}`;
-            document.getElementById('addresses').innerText += `${doc.id} => ${data.last_updated}`;
         });
+        tableCreate(docs);
     });
 }
 
@@ -61,4 +61,53 @@ function signOut() {
         // An error happened.
         console.log('failed to sign out');
     });
+}
+
+
+function tableCreate(docs) {
+
+    let tbdy = document.createElement('tbody');
+    let body = document.getElementsByTagName('body')[0];
+
+    let tbl = document.getElementsByTagName('table')[0];
+    if (tbl == null) {
+        tbl = document.createElement('table');
+    }
+    else {
+
+    }
+    docs.forEach((doc) => {
+        tmp = doc.data();
+        let data = doc.data();
+        console.log(data.hostname);
+        console.log(data.ip);
+        console.log(data.last_updated);
+
+        let tr = document.createElement('tr');
+        // tr.appendChild(td);
+        createTableRow(data).forEach( col => {
+            tr.appendChild(col);
+        })
+        tbdy.appendChild(tr);
+    });
+
+    tbl.style.width = '100%';
+    tbl.setAttribute('border', '1');
+
+
+    tbl.appendChild(tbdy);
+    body.appendChild(tbl)
+}
+
+
+function createTableRow(data) {
+
+    let cols = [];
+    for (let key in data) {
+        console.log(key, data[key])
+        let td = document.createElement('td');
+        td.appendChild(document.createTextNode(data[key]));
+        cols.push(td);
+    }
+    return cols;
 }

@@ -29,7 +29,10 @@ while True:
 
     data = {'ip': ip, 'hostname': hostname, 'last_updated': last_updated}
 
-    # doc_ref = db.collection(u'address_book').document(u'hostname')
-    doc_ref = db.collection(u'address_book').document(hostname)
-    doc_ref.set(data)
-    time.sleep(3 * 60)
+    try:
+        doc_ref = db.collection(u'address_book').document(hostname)
+        doc_ref.set(data)
+    except Exception as e:
+        print(e)
+    # time.sleep(3 * 60)
+    time.sleep(3)
