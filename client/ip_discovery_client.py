@@ -2,7 +2,6 @@ import json
 import datetime
 import time
 import socket
-import pyrebase as firebase
 
 import firebase_admin
 from firebase_admin import credentials
