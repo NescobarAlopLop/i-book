@@ -1,9 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
 body {
     background: #ECEFF1;
     color: rgba(0, 0, 0, 0.87);
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Roboto Mono', monospace;
     margin: 0;
     padding: 0;
+}
+
+table {
+    font-size: 2em;
+    font-weight: 400;
 }
 
 #message {
