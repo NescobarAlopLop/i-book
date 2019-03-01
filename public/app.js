@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", event => {
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
     }
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            // User is signed in.
+            let del = document.getElementById("message");
+            let parent = del.parentElement;
+            parent.removeChild(del);
+            updateData();
+        } else {
+            // No user is signed in.
+        }
+    });
 });
 
 
@@ -22,18 +33,8 @@ function googleLogin() {
         const user = result.user;
         document.write(`Hello ${user.displayName}`);
         console.log(user);
-        // getData();
-        const db = firebase.firestore();
-        db.collection("address_book").get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                let data = doc.data();
-                console.log(`${doc.id} => ${data.ip}`);
-                console.log(`${doc.id} => ${data.hostname}`);
-                console.log(`${doc.id} => ${data.last_updated}`);
-            });
-        }).then(() => {
-            updateData();
-        }).catch(console.log);
+        updateData();
+
     }).catch(console.log);
 }
 
@@ -65,8 +66,6 @@ function signOut() {
 
 
 function tableCreate(docs) {
-
-    let tbdy = document.createElement('tbody');
     let body = document.getElementsByTagName('body')[0];
 
     let tbl = document.getElementsByTagName('table')[0];
@@ -74,28 +73,34 @@ function tableCreate(docs) {
         tbl = document.createElement('table');
     }
     else {
-
+        // TODO:
     }
-    docs.forEach((doc) => {
-        tmp = doc.data();
-        let data = doc.data();
-        console.log(data.hostname);
-        console.log(data.ip);
-        console.log(data.last_updated);
 
-        let tr = document.createElement('tr');
-        // tr.appendChild(td);
-        createTableRow(data).forEach( col => {
-            tr.appendChild(col);
-        })
-        tbdy.appendChild(tr);
+    docs.forEach((doc) => {
+        let data = doc.data();
+
+        let tr = document.getElementById(data.hostname);
+        if (tr) {
+            console.log(`update for ${data.hostname}`);
+            let parent = tr.parentElement;
+            parent.removeChild(tr);
+            // tr.cells[1].innerText = data.ip;
+            // tr.cells[1].setAttribute("href", data.ip);
+            // tr.cells[2].textContent = data.last_updated;
+        }
+        // else {
+            // let tr = document.createElement('tr');
+        tr = document.createElement('tr');
+            tr.setAttribute("id", data.hostname);
+            createTableRow(data).forEach( col => {
+                tr.appendChild(col);
+            })
+            tbl.appendChild(tr);
+        // }
     });
 
     tbl.style.width = '100%';
     tbl.setAttribute('border', '1');
-
-
-    tbl.appendChild(tbdy);
     body.appendChild(tbl)
 }
 
@@ -103,11 +108,20 @@ function tableCreate(docs) {
 function createTableRow(data) {
 
     let cols = [];
-    for (let key in data) {
-        console.log(key, data[key])
-        let td = document.createElement('td');
-        td.appendChild(document.createTextNode(data[key]));
-        cols.push(td);
-    }
+    let td = document.createElement('td');
+    td.appendChild(document.createTextNode(data.hostname));
+    cols.push(td);
+
+    let link_text = document.createTextNode(data.ip);
+    let anchor = document.createElement('a');
+    anchor.setAttribute("href", `http://${data.ip}/`);
+    anchor.appendChild(link_text);
+    td = document.createElement('td');
+    td.appendChild(anchor);
+    cols.push(td);
+
+    td = document.createElement('td');
+    td.appendChild(document.createTextNode(data.last_updated));
+    cols.push(td);
     return cols;
 }
