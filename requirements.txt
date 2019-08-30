@@ -1,3 +1,7 @@
 requests
 python-firebase
 Pyrebase
+firebase_admin
+google-auth-oauthlib
+cryptography
+pyasn1-modules
