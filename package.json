@@ -26,7 +26,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "log-request": "0.0.1",
-    "mongodb": "^4.6.0",
+    "mongodb": "^4.17.0",
     "nodemon": "^2.0.13"
   }
 }
